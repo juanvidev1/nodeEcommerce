@@ -1,49 +1,24 @@
 const express = require('express');
+const { faker } = require('@faker-js/faker');
 const app = express();
 const port = process.env.PORT || 5000;
 
-const categories = [
-  {
-    id: 1,
-    'name': 'Categoria 1',
-    'description': 'Descripcion de la categoria 1'
-  },
-  {
-    id: 2,
-    'name': 'Categoria 2',
-    'description': 'Descripcion de la categoria 2'
-  },
-  {
-    id: 3,
-    'name': 'Categoria 3',
-    'description': 'Descripcion de la categoria 3'
-  }
-];
-
-const products = [
-  {
-    id: 1,
-    'product_name': 'Producto 1',
-    'price': 1000
-  },
-  {
-    id: 2,
-    'product_name': 'Producto 2',
-    'price': 2000
-  },
-  {
-    id: 3,
-    'product_name': 'Producto 3',
-    'price': 3000
-  }
-];
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
 app.get('/api/categories', (req, res) => {
-  res.json(categories);
+  const categories2 = [];
+  const { size } = req.query;
+  const limit = size || 10;
+  for (let i = 0; i < limit; i++) {
+    categories2.push({
+      name: faker.commerce.department(),
+      description: faker.commerce.productDescription()
+    });
+  }
+  res.json(categories2);
 });
 
 app.get('/api/categories/:id', (req, res) => {
@@ -56,7 +31,17 @@ app.get('/api/categories/:id', (req, res) => {
 });
 
 app.get('/api/products', (req, res) => {
-    res.json(products);
+  const products2 = [];
+  const { size } = req.query;
+  const limit = size || 10;
+  for (let i = 0; i < limit; i++) {
+    products2.push({
+      product_name: faker.commerce.productName(),
+      price: parseInt(faker.commerce.price(), 10),
+      image: faker.image.url()
+    });
+  }
+  res.json(products2);
 });
 
 app.get('/api/products/:id', (req, res) => {
@@ -76,6 +61,28 @@ app.get('/api/categories/:categoryId/products/:productId', (req, res) => {
       'price': productId + categoryId * 100
     }
   ]);
+});
+
+app.get('/api/users', (req, res) => {
+  const { limit, offset } = req.query;
+  if (limit && offset) {
+    res.json({
+      'limit' : limit,
+      'offset' : offset
+    })
+  }
+  else if (limit) {
+    res.json({
+      'limit' : limit
+    })
+  }
+  else if (offset) {
+    res.json({
+      'offset' : offset
+    })
+  } else {
+    res.send('No hay parametros');
+  }
 });
 
 app.listen(port, () => {
