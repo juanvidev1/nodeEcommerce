@@ -1,7 +1,7 @@
 const express = require('express');
-const { faker } = require('@faker-js/faker');
+const UsersService = require('../services/usersService');
 
-const users = [];
+const service = new UsersService();
 
 const router = express.Router();
 
@@ -25,13 +25,7 @@ router.get('/', (req, res) => {
   } else {
     res.send('No hay parametros');
   }*/
-  if (users.length === 0) {
-    res.status(404).json({
-      message: 'No hay usuarios creados'
-    })
-  }
-
-  res.status(200).json(users);
+  res.status(200).json(service.getAllUsers());
 });
 
 router.get('/:id', (req, res) => {
