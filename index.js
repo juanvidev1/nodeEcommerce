@@ -2,6 +2,7 @@ const express = require('express');
 const routerApi = require('./routes');
 const app = express();
 const cors = require('cors');
+const morgan = require('morgan');
 const port = process.env.PORT || 5000;
 
 const { logError, errorHandler, boomErrorHandler } = require('./middleware/errorHandler');
@@ -9,10 +10,10 @@ const { logError, errorHandler, boomErrorHandler } = require('./middleware/error
 app.use(express.json());
 
 // We can give access only to specific domains
-const whitelist = ['http://localhost:5000', 'http://localhost:3000'];
+const whitelist = ['http://localhost:5000/', 'http://localhost:3000/'];
 const options = {
   origin: (origin, callback) => {
-    if (whitelist.includes(origin)) {
+    if (whitelist.includes(origin) || !origin) {
       callback(null, true);
     } else {
       callback(new Error('No permitido'));
@@ -20,6 +21,7 @@ const options = {
   }
 }
 app.use(cors(options));
+app.use(morgan('dev'));
 
 
 app.get('/', (req, res) => {
