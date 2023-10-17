@@ -1,5 +1,7 @@
 const express = require('express');
 const ProductsService = require('../services/productsService');
+const validatorHandler = require('../middleware/validatorHandler');
+const { createProductSchema, updateProductSchema, getProductSchema } = require('../schemas/productSchema');
 
 const router = express.Router();
 const service = new ProductsService();
@@ -11,39 +13,46 @@ router.get('/', async (req, res) => {
   res.json(products);
 });
 
-router.get('/:id', async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    product = await service.getProductById(id);
-    res.json(product);
-  } catch (error) {
-    next(error); // This is the way to use the error handler middleware
-  }
+router.get('/:id', 
+  validatorHandler(getProductSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      product = await service.getProductById(id);
+      res.json(product);
+    } catch (error) {
+      next(error); // This is the way to use the error handler middleware
+    }
 });
 
-router.post('/', async (req, res) => {
-  const body = req.body;
-  const newProduct = await service.createProduct(body);
-
-  res.status(201).json({
-    message: 'Producto creado',
-    data: newProduct
-  });
-});
-
-router.patch('/:id', async (req, res, next) => {
-  try {
-    const { id } = req.params;
+router.post('/', 
+  validatorHandler(createProductSchema, 'body'),
+  async (req, res) => {
     const body = req.body;
-    product = await service.updateProduct(id, body);
+    const newProduct = await service.createProduct(body);
 
-    res.status(200).json({
-      message: 'Producto actualizado',
-      data: product
+    res.status(201).json({
+      message: 'Producto creado',
+      data: newProduct
     });
-  } catch (error) {
-    next(error);
-  }
+});
+
+router.patch('/:id', 
+  validatorHandler(getProductSchema, 'params'),
+  validatorHandler(updateProductSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const body = req.body;
+      product = await service.updateProduct(id, body);
+
+      res.status(200).json({
+        message: 'Producto actualizado',
+        data: product
+      });
+    } catch (error) {
+      next(error);
+    }
 });
 
 router.delete('/:id', async (req, res) => {
