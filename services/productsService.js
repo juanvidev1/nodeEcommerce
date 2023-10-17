@@ -1,4 +1,5 @@
 const { faker } = require('@faker-js/faker');
+const boom = require('@hapi/boom');
 
 class ProductsService {
   constructor() {
@@ -17,10 +18,11 @@ class ProductsService {
         id: i + 1,
         name: faker.commerce.productName(),
         price: parseInt(faker.commerce.price(), 10),
-        image: faker.image.url()
+        image: faker.image.url(),
+        isBlocked: faker.datatype.boolean()
       });
     }
-  }
+  };
 
   getAllProducts() {
     return new Promise((resolve, reject) => {
@@ -28,15 +30,18 @@ class ProductsService {
         resolve(this.products);
       }, 5000);
     });
-  }
+  };
 
   getProductById(id) {
-   const product = this.products.find(product => product.id === parseInt(id));
-   if (!product) {
-     throw new Error('Producto no encontrado');
-   }
+    const product = this.products.find(product => product.id === parseInt(id));
+    if (!product) {
+      throw boom.notFound('Producto no encontrado'); // We need to create a boom error handler in the error handler file
+    }
+    if (product.isBlocked) {
+      throw boom.conflict('Producto bloqueado'); // This could be something that can be used as a bussiness logic. IE A product will be blocked if the store gets out of stock of the product
+    }  
    return product;
-  }
+  };
 
   createProduct(data) {
     const newProduct = {
@@ -50,14 +55,14 @@ class ProductsService {
         resolve(newProduct);
       }, 5000);
     });
-  }
+  };
 
   updateProduct(id, changes) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         const index = this.products.findIndex(product => product.id === parseInt(id));
         if (index === -1) {
-          reject('Producto no encontrado');
+          reject(boom.notFound('Producto no encontrado')); // Don't forget to use reject in promises when using a setTimeout method
         }
 
         const product = this.products[index];
@@ -67,9 +72,9 @@ class ProductsService {
         };
 
         resolve(this.products[index]);
-      }, 5000);
+      }, 2000);
     });
-  }
+  };
 
   deleteProduct(id) {
     return new Promise((resolve, reject) => {
@@ -84,7 +89,7 @@ class ProductsService {
       }, 5000);
 
     });
-  }
+  };
 }
 
 module.exports = ProductsService;
