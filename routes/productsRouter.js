@@ -23,7 +23,8 @@ router.get('/:id',
     } catch (error) {
       next(error); // This is the way to use the error handler middleware
     }
-});
+  }
+);
 
 router.post('/', 
   validatorHandler(createProductSchema, 'body'),
@@ -35,7 +36,8 @@ router.post('/',
       message: 'Producto creado',
       data: newProduct
     });
-});
+  }
+);
 
 router.patch('/:id', 
   validatorHandler(getProductSchema, 'params'),
@@ -53,16 +55,20 @@ router.patch('/:id',
     } catch (error) {
       next(error);
     }
-});
+  }
+);
 
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-  product = await service.deleteProduct(id);
+router.delete('/:id', 
+  validatorHandler(getProductSchema, 'params'),
+  async (req, res) => {
+    const { id } = req.params;
+    product = await service.deleteProduct(id);
 
-  res.json({
-    message: 'Producto eliminado',
-    data: product
-  });
-});
+    res.json({
+      message: 'Producto eliminado',
+      data: product
+    });
+  }
+);
 
 module.exports = router;
