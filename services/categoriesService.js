@@ -1,15 +1,13 @@
 const { faker, th } = require("@faker-js/faker");
 const boom = require('@hapi/boom');
 
-const pool = require('../libs/postgresPool');
+const sequelize = require('../libs/sequelize');
 
 class CategoriesService {
 
   constructor() {
     this.categories = []; // Start an empty array. This is gonna fake the DB for this exercise. Try to use not moore than 30 "registers"
     this.generate();
-    this.pool = pool;
-    this.pool.on('error', (err) => console.error(err));
   }
 
   /**
@@ -29,12 +27,12 @@ class CategoriesService {
 
   async getAllCategories() {
     const query = 'SELECT * FROM categories';
-    const res = await this.pool.query(query);
+    const [data] = await sequelize.query(query);
 
-    if (!res.rows) {
+    if (!data) {
       throw boom.notFound('No hay categorias');
     }
-    return res.rows;
+    return data;
   }
 
   getCategory(id) {
