@@ -8,9 +8,13 @@ const service = new UsersService();
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-  users = await service.getAllUsers();
-  res.json(users);
+router.get('/', async (req, res, next) => {
+  try {
+    const users = await service.getAllUsers();
+    res.json(users);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.get('/:id', 
