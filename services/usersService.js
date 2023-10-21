@@ -1,7 +1,8 @@
 const { faker } = require("@faker-js/faker");
 const boom = require("@hapi/boom");
 
-const getConection = require("../libs/postgres");
+// const getConection = require("../libs/postgres");
+const pool = require("../libs/postgresPool");
 
 
 class UsersService {
@@ -27,8 +28,11 @@ class UsersService {
 
 
     async getAllUsers() {
-      const client = await getConection();
-      const res = await client.query('SELECT * FROM tasks');
+      const query = 'SELECT * FROM users';
+      const res = await pool.query(query);
+      if (!res.rows) {
+        throw boom.notFound('No se encontraron usuarios');
+      }
       return res.rows;
     }
 

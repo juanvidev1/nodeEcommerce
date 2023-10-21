@@ -1,12 +1,15 @@
 const { faker, th } = require("@faker-js/faker");
 const boom = require('@hapi/boom');
 
+const pool = require('../libs/postgresPool');
+
 class CategoriesService {
 
   constructor() {
     this.categories = []; // Start an empty array. This is gonna fake the DB for this exercise. Try to use not moore than 30 "registers"
     this.generate();
-
+    this.pool = pool;
+    this.pool.on('error', (err) => console.error(err));
   }
 
   /**
@@ -24,11 +27,14 @@ class CategoriesService {
     }
   }
 
-  getAllCategories() {
-    if (this.categories.length === 0) {
+  async getAllCategories() {
+    const query = 'SELECT * FROM categories';
+    const res = await this.pool.query(query);
+
+    if (!res.rows) {
       throw boom.notFound('No hay categorias');
     }
-    return this.categories;
+    return res.rows;
   }
 
   getCategory(id) {
