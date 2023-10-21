@@ -1,39 +1,27 @@
 const { faker } = require('@faker-js/faker');
 const boom = require('@hapi/boom');
 
+const { models } = require('../libs/sequelize');
+
 class ProductsService {
-  constructor() {
-    this.products = [];
-    this.generate();
-  }
+  constructor() {}
 
-  /**
-   * This method is used to generate fake products.
-   * @returns {void}
-   */
-  generate() {
-    const limit = 100;
-    for (let i = 0; i < limit; i++) {
-      this.products.push({
-        id: i + 1,
-        name: faker.commerce.productName(),
-        price: parseInt(faker.commerce.price(), 10),
-        image: faker.image.url(),
-        isBlocked: faker.datatype.boolean()
-      });
+  async getAllProducts() {
+    const res = await models.Product.findAll();
+    
+    if(res.length === 0) {
+      throw boom.notFound('No hay productos');
     }
-  };
 
-  getAllProducts() {
-    return this.products;
+    return res;
   };
 
   getProductById(id) {
-    const product = this.products.find(product => product.id === parseInt(id));
+    const product = models.Product.findByPk(id);
     if (!product) {
       throw boom.notFound('Producto no encontrado'); // We need to create a boom error handler in the error handler file
     }
-    if (product.isBlocked) {
+    if (product.product_active === false) {
       throw boom.conflict('Producto bloqueado'); // This could be something that can be used as a bussiness logic. IE A product will be blocked if the store gets out of stock of the product
     }  
     return product;

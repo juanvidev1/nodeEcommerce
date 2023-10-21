@@ -32,41 +32,56 @@ router.get('/:id',
 
 router.post('/', 
   validatorHandler(createUserSchema, 'body'), 
-  async (req, res) => {
+  async (req, res, next) => {
   const body = req.body;
-  const newUser = await service.createUser(body);
+  
+  try {
+    const newUser = await service.createUser(body);
 
-  res.status(201).json({
-    message: 'Usuario creado',
-    data: newUser
-  })
+    res.status(201).json({
+      message: 'Usuario creado',
+      data: newUser
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.patch('/:id', 
   validatorHandler(getUserSchema, 'params'),
   validatorHandler(updateUserSchema, 'body'),
-  async (req, res) => {
+  async (req, res, next) => {
   const { id } = req.params;
   const body = req.body;
 
-  const user = await service.updateUser(id, body);
+  try {
+    const user = await service.updateUser(id, body);
 
-  res.status(200).json({
-    message: 'Usuario actualizado',
-    data: user
-  });
+    res.status(200).json({
+      message: 'Usuario actualizado',
+      data: user
+    });
+  } catch (error) {
+    next(error);
+  }
+
 
 });
 
 router.delete('/:id', 
   validatorHandler(getUserSchema, 'params'),
-  async (req, res) => {
+  async (req, res, next) => {
   const { id } = req.params;
-  const response = await service.deleteUser(id);
-  res.status(200).json({
-    message: 'Usuario eliminado',
-    data: response
-  });
+
+  try {
+    const response = await service.deleteUser(id);
+    res.status(200).json({
+      message: 'Usuario eliminado',
+      data: response
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;

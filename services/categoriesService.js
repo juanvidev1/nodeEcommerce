@@ -1,38 +1,19 @@
 const { faker, th } = require("@faker-js/faker");
 const boom = require('@hapi/boom');
 
-const sequelize = require('../libs/sequelize');
+const { models } = require('../libs/sequelize');
 
 class CategoriesService {
 
-  constructor() {
-    this.categories = []; // Start an empty array. This is gonna fake the DB for this exercise. Try to use not moore than 30 "registers"
-    this.generate();
-  }
-
-  /**
-   * This method will populate our categories array with fake data.
-   * @returns {void}
-   */
-  generate() {
-    const limit = 10;
-    for (let index = 0; index < limit; index++) {
-      this.categories.push({
-        id: index + 1,
-        name: faker.commerce.department(),
-        image: faker.image.url(),
-      });
-    }
-  }
+  constructor() {}
 
   async getAllCategories() {
-    const query = 'SELECT * FROM categories';
-    const [data] = await sequelize.query(query);
-
-    if (!data) {
+    const res = await models.Category.findAll();
+    
+    if (res.length === 0) {
       throw boom.notFound('No hay categorias');
     }
-    return data;
+    return res;
   }
 
   getCategory(id) {

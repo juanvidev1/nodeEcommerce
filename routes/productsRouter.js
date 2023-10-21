@@ -3,14 +3,19 @@ const ProductsService = require('../services/productsService');
 const validatorHandler = require('../middleware/validatorHandler');
 const { createProductSchema, updateProductSchema, getProductSchema } = require('../schemas/productSchema');
 
+
 const router = express.Router();
 const service = new ProductsService();
 
-router.get('/', async (req, res) => {
-  // const { size } = req.query;
-  products = await service.getAllProducts();
+router.get('/', async (req, res, next) => {
+  try {
+    const products = await service.getAllProducts();
 
-  res.json(products);
+    res.json(products); 
+  } catch (error) {
+    next(error);
+  }
+  
 });
 
 router.get('/:id', 
@@ -28,14 +33,18 @@ router.get('/:id',
 
 router.post('/', 
   validatorHandler(createProductSchema, 'body'),
-  async (req, res) => {
+  async (req, res, next) => {
     const body = req.body;
-    const newProduct = await service.createProduct(body);
+    try {
+      const newProduct = await service.createProduct(body);
 
-    res.status(201).json({
-      message: 'Producto creado',
-      data: newProduct
-    });
+      res.status(201).json({
+        message: 'Producto creado',
+        data: newProduct
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 );
 
@@ -60,14 +69,18 @@ router.patch('/:id',
 
 router.delete('/:id', 
   validatorHandler(getProductSchema, 'params'),
-  async (req, res) => {
+  async (req, res, next) => {
     const { id } = req.params;
-    product = await service.deleteProduct(id);
+    try {
+      product = await service.deleteProduct(id);
 
-    res.json({
-      message: 'Producto eliminado',
-      data: product
-    });
+      res.json({
+        message: 'Producto eliminado',
+        data: product
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 );
 

@@ -1,39 +1,18 @@
 const { faker } = require("@faker-js/faker");
 const boom = require("@hapi/boom");
 
-// const getConection = require("../libs/postgres");
-const pool = require("../libs/postgresPool");
-
+const { models } = require("../libs/sequelize");
 
 class UsersService {
-    constructor() {
-        // this.users = [];
-        // this.generate();
-    }
+    constructor() {}
 
-    // This method is used to generate fake data. It can be called in the class constructor to populate the array with 100 registers
-    // generate() {
-    //     const limit = 100
-    //     for (let i = 0; i < limit; i++) {
-    //         this.users.push({
-    //             id: i + 1,
-    //             userName: faker.person.firstName(),
-    //             lastName: faker.person.lastName(),
-    //             userEmail: faker.internet.email(),
-    //             userPassword: "Contaseña123@",
-    //             active: faker.datatype.boolean(),
-    //         });
-    //     }
-    // }
-
-
+    
     async getAllUsers() {
-      const query = 'SELECT * FROM users';
-      const res = await pool.query(query);
-      if (!res.rows) {
+      const res = await models.User.findAll();
+      if (res.length === 0) {
         throw boom.notFound('No se encontraron usuarios');
       }
-      return res.rows;
+      return res;
     }
 
     getUserById(userId) {
