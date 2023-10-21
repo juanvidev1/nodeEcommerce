@@ -25,11 +25,7 @@ class ProductsService {
   };
 
   getAllProducts() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(this.products);
-      }, 5000);
-    });
+    return this.products;
   };
 
   getProductById(id) {
@@ -40,7 +36,7 @@ class ProductsService {
     if (product.isBlocked) {
       throw boom.conflict('Producto bloqueado'); // This could be something that can be used as a bussiness logic. IE A product will be blocked if the store gets out of stock of the product
     }  
-   return product;
+    return product;
   };
 
   createProduct(data) {
@@ -50,19 +46,13 @@ class ProductsService {
     }
 
     this.products.push(newProduct);
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(newProduct);
-      }, 5000);
-    });
+    return newProduct;
   };
 
   updateProduct(id, changes) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const index = this.products.findIndex(product => product.id === parseInt(id));
+    const index = this.products.findIndex(product => product.id === parseInt(id));
         if (index === -1) {
-          reject(boom.notFound('Producto no encontrado')); // Don't forget to use reject in promises when using a setTimeout method
+          return boom.notFound('Producto no encontrado'); // Don't forget to use reject in promises when using a setTimeout method        }
         }
 
         const product = this.products[index];
@@ -71,24 +61,18 @@ class ProductsService {
           ...changes
         };
 
-        resolve(this.products[index]);
-      }, 2000);
-    });
+    return this.products[index];
   };
 
   deleteProduct(id) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const index = this.products.findIndex(product => product.id === parseInt(id));
-        if (index === -1) {
-          reject('Producto no encontrado');
-        }
+    const index = this.products.findIndex(item => item.id === parseInt(id));
+    if (index === -1) {
+      return 'Producto no encontrado';
+    }
 
-        this.products.splice(index, 1);
-        resolve({ id });
-      }, 5000);
-
-    });
+    this.products.splice(index, 1);
+    
+    return { id };
   };
 }
 

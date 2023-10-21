@@ -1,4 +1,5 @@
 const { faker } = require("@faker-js/faker");
+const boom = require("@hapi/boom");
 
 /**
  * This class is used to separate the logic of the users.js file.
@@ -12,7 +13,7 @@ const { faker } = require("@faker-js/faker");
 class UsersService {
     constructor() {
         this.users = [];
-        // this.generate();
+        this.generate();
     }
 
     // This method is used to generate fake data. It can be called in the class constructor to populate the array with 100 registers
@@ -20,42 +21,53 @@ class UsersService {
         const limit = 100
         for (let i = 0; i < limit; i++) {
             this.users.push({
-                id: i,
+                id: i + 1,
                 userName: faker.person.firstName(),
                 lastName: faker.person.lastName(),
                 userEmail: faker.internet.email(),
-                userPassword: "Contaseña123@"
+                userPassword: "Contaseña123@",
+                active: faker.datatype.boolean(),
             });
         }
     }
 
 
     getAllUsers() {
-
-        if (this.users.length == 0) {
-            return "No hay usuarios registrados"
-        }
-        return this.users;
+      if (this.users.length == 0) {
+        return(boom.notFound('No hay usuarios en la base de datos'));
+      }
+      return(this.users);
     }
 
     getUserById(userId) {
-        return this.users.find(user => user.id === parseInt(userId))
+        const user =  this.users.find(user => user.id === parseInt(userId))
+        if (!user) {
+          throw boom.notFound('Usuario no encontrado');
+        }
+        if (user.active === false) {
+            throw boom.conflict('Usuario bloqueado');
+        }
+
+        return user;
     }
 
     createUser(userData) {
-      const newUser = {
-        id: this.users.length + 1,
-        ...userData
-      }
-      this.users.push(newUser);
-      return newUser;
+      try {
+        const newUser = {
+          id: this.users.length + 1,
+          ...userData
+        }
+        this.users.push(newUser);
+        return newUser;
+        } catch (error) {
+          throw boom.badRequest(error);
+        }
     }
 
     updateUser(userId, userData) {
       const index = this.users.findIndex(item => item.id === parseInt(userId));
-
       if (index === -1) {
-        throw new Error('Usuario no encontrado');
+         throw boom.notFound('Usuario no encontrado');
       }
 
       const user = this.users[index];
@@ -70,9 +82,8 @@ class UsersService {
 
     deleteUser(id) {
       const index = this.users.findIndex(item => item.id === parseInt(id));
-
       if (index === -1) {
-        throw new Error('Usuario no encontrado');
+        throw boom.notFound('Usuario no encontrado');
       }
 
       this.users.splice(index, 1);

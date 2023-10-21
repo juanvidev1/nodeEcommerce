@@ -1,4 +1,5 @@
-const { faker } = require("@faker-js/faker");
+const { faker, th } = require("@faker-js/faker");
+const boom = require('@hapi/boom');
 
 class CategoriesService {
 
@@ -25,13 +26,17 @@ class CategoriesService {
 
   getAllCategories() {
     if (this.categories.length === 0) {
-      return "No existe ninguna categoria"
+      throw boom.notFound('No hay categorias');
     }
     return this.categories;
   }
 
   getCategory(id) {
-    return this.categories.find(item => item.id === parseInt(id)); // Try to find the category using the id passed as param in your categories array
+    const category = this.categories.find(item => item.id === parseInt(id)); // Try to find the category using the id passed as param in your categories array;
+    if (!category) {
+      throw boom.notFound('Categoria no encontrada');
+    }
+    return category;
   }
 
   createCategory(data) {
@@ -47,7 +52,7 @@ class CategoriesService {
     const index = this.categories.findIndex(item => item.id === parseInt(id));
 
     if (index === -1) {
-      throw new Error('Categoria no encontrada');
+      throw boom.notFound('Categoria no encontrada');
     }
 
     const category = this.categories[index];
@@ -64,7 +69,7 @@ class CategoriesService {
     const index = this.categories.findIndex(item => item.id === parseInt(id));
 
     if (index === -1) {
-      throw new Error('Categoria no encontrada');
+      throw boom.notFound('Categoria no encontrada');
     }
 
     this.categories.splice(index, 1);

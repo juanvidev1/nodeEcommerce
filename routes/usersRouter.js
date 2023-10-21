@@ -1,48 +1,36 @@
 const express = require('express');
 const UsersService = require('../services/usersService');
+const validatorHandler = require('../middleware/validatorHandler');
+const { createUserSchema, updateUserSchema, getUserSchema } = require('../schemas/userSchema');
+
 
 const service = new UsersService();
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  /*const { limit, offset } = req.query;
-  if (limit && offset) {
-    res.json({
-      'limit' : limit,
-      'offset' : offset
-    })
-  }
-  else if (limit) {
-    res.json({
-      'limit' : limit
-    })
-  }
-  else if (offset) {
-    res.json({
-      'offset' : offset
-    })
-  } else {
-    res.send('No hay parametros');
-  }*/
-  res.status(200).json(service.getAllUsers());
+router.get('/', async (req, res) => {
+  users = await service.getAllUsers();
+  res.json(users);
 });
 
-router.get('/:id', (req, res) => {
-  const { id } = req.params;
-  const user = service.getUserById(id);
-  if (!user) {
-    res.status(404).json({
-      message: 'Usuario no encontrado'
-    })
+router.get('/:id', 
+  validatorHandler(getUserSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const user = service.getUserById(id);
+      res.json(user);
+    } catch (error) {
+      next(error);
+    }
   }
-  res.status(200).json(user);
+);
 
-});
-
-router.post('/', (req, res) => {
+router.post('/', 
+  validatorHandler(createUserSchema, 'body'), 
+  async (req, res) => {
   const body = req.body;
-  const newUser = service.createUser(body);
+  const newUser = await service.createUser(body);
 
   res.status(201).json({
     message: 'Usuario creado',
@@ -50,11 +38,14 @@ router.post('/', (req, res) => {
   })
 });
 
-router.patch('/:id', (req, res) => {
+router.patch('/:id', 
+  validatorHandler(getUserSchema, 'params'),
+  validatorHandler(updateUserSchema, 'body'),
+  async (req, res) => {
   const { id } = req.params;
   const body = req.body;
 
-  const user = service.updateUser(id, body);
+  const user = await service.updateUser(id, body);
 
   res.status(200).json({
     message: 'Usuario actualizado',
@@ -63,9 +54,11 @@ router.patch('/:id', (req, res) => {
 
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', 
+  validatorHandler(getUserSchema, 'params'),
+  async (req, res) => {
   const { id } = req.params;
-  const response = service.deleteUser(id);
+  const response = await service.deleteUser(id);
   res.status(200).json({
     message: 'Usuario eliminado',
     data: response

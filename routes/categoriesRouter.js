@@ -1,17 +1,21 @@
 const express = require('express');
 const categoriesService = require('../services/categoriesService');
+const validatorHandler = require('../middleware/validatorHandler');
+const { createCategorySchema, updateCategorySchema, getCategorySchema } = require('../schemas/categorySchema');
 
 const router = express.Router();
 const service = new categoriesService();
 
-router.get('/', (req, res) => {
-  let categories = service.getAllCategories(); // This line gets a list of categories from categoriesService class. See categoriesService.js file
+router.get('/', async (req, res) => {
+  let categories = await service.getAllCategories(); // This line gets a list of categories from categoriesService class. See categoriesService.js file
   res.status(200).json(categories); // Shows the list of categories
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', 
+  validatorHandler(getCategorySchema, 'params'),
+  async (req, res) => {
   const { id } = req.params; // Get an id from params (eg. categories/1)
-  category = service.getCategory(id); // This line gets a category from categoriesService class. See categoriesService.js file
+  category = await service.getCategory(id); // This line gets a category from categoriesService class. See categoriesService.js file
   if (!category) {
     res.status(404).json({message: 'Categoria no encontrada'}); // Shows if the category is not found in your categories array. If it is, it will send a 404 error
   }
@@ -19,10 +23,12 @@ router.get('/:id', (req, res) => {
 });
 
 // Create a category endpoint
-router.post('/', (req, res) => {
+router.post('/', 
+  validatorHandler(createCategorySchema, 'body'),
+  async (req, res) => {
   const body = req.body; // Here we get the data sent trought the json body in the client (postman or others)
 
-  let newCategory = service.createCategory(body); // This line gets a category from categoriesService class. See categoriesService.js file
+  let newCategory = await service.createCategory(body); // This line gets a category from categoriesService class. See categoriesService.js file
 
   res.status(201).json({
     message: 'Categoria creada', // Shows a message with the success of a new category created
@@ -31,14 +37,14 @@ router.post('/', (req, res) => {
 });
 
 // Update a category
-router.patch('/:id', (req, res) => {
+router.patch('/:id', 
+  validatorHandler(getCategorySchema, 'params'),
+  validatorHandler(updateCategorySchema, 'body'),
+  async (req, res) => {
   const { id } = req.params;
   const body = req.body;
 
-  const category = service.updateCategory(id, body); // This line gets a category from categoriesService class. See categoriesService.js file
-  if (!category) {
-    res.status(404).json({message: 'Categoria no encontrada'}); // Shows if the category is not found in your categories array. If it is, it will send a 404 error
-  }
+  const category = await service.updateCategory(id, body); // This line gets a category from categoriesService class. See categoriesService.js file
 
   return res.status(200).json({
     message: 'Categoria actualizada',
@@ -46,12 +52,12 @@ router.patch('/:id', (req, res) => {
   });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', 
+  validatorHandler(getCategorySchema, 'params'),
+  async (req, res) => {
   const { id } = req.params;
-  category = service.deleteCategory(id); // This line gets a category from categoriesService class. See categoriesService.js file
-  if (!category) {
-    res.status(404).send('Categoria no encontrada');
-  }
+  category = await service.deleteCategory(id); // This line gets a category from categoriesService class. See categoriesService.js file
+  
   res.json({
     message: 'Categoria eliminada',
     deleted: category
