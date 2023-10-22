@@ -27,33 +27,24 @@ class UsersService {
         return user;
     }
 
-    createUser(userData) {
+    async createUser(userData) {
       try {
-        const newUser = {
-          id: this.users.length + 1,
-          ...userData
-        }
-        this.users.push(newUser);
+        const newUser = await models.User.create(userData);
         return newUser;
-        } catch (error) {
-          throw boom.badRequest(error);
-        }
+      } catch (error) {
+        throw boom.badRequest(error);
+      }
     }
 
-    updateUser(userId, userData) {
-      const index = this.users.findIndex(item => item.id === parseInt(userId));
-      if (index === -1) {
-         throw boom.notFound('Usuario no encontrado');
-      }
+    async updateUser(userId, userData) {
+      const user = await models.User.findByPk(userId);
+      if (!user) {
+        throw boom.notFound('Usuario no encontrado');
+      } 
 
-      const user = this.users[index];
+      const res = await models.User.update(userData);
 
-      this.users[index] = {
-        ...user,
-        ...userData
-      }
-      // this.users[user] = userData;
-      return this.users[index];
+      return res;
     }
 
     deleteUser(id) {

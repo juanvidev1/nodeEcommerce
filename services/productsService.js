@@ -16,8 +16,8 @@ class ProductsService {
     return res;
   };
 
-  getProductById(id) {
-    const product = models.Product.findByPk(id);
+  async getProductById(id) {
+    const product = await models.Product.findByPk(id);
     if (!product) {
       throw boom.notFound('Producto no encontrado'); // We need to create a boom error handler in the error handler file
     }
