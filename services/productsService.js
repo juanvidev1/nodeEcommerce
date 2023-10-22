@@ -27,39 +27,22 @@ class ProductsService {
     return product;
   };
 
-  createProduct(data) {
-    const newProduct = {
-      id: this.products.length + 1,
-      ...data
-    }
+   async createProduct(data) {
+    const newProduct = await models.Product.create(data);
 
-    this.products.push(newProduct);
     return newProduct;
   };
 
-  updateProduct(id, changes) {
-    const index = this.products.findIndex(product => product.id === parseInt(id));
-        if (index === -1) {
-          return boom.notFound('Producto no encontrado'); // Don't forget to use reject in promises when using a setTimeout method        }
-        }
+  async updateProduct(id, changes) {
+    const product = await this.getProductById(id);
+    const res = await product.update(changes);
 
-        const product = this.products[index];
-        this.products[index] = {
-          ...product,
-          ...changes
-        };
-
-    return this.products[index];
+    return res;
   };
 
-  deleteProduct(id) {
-    const index = this.products.findIndex(item => item.id === parseInt(id));
-    if (index === -1) {
-      return 'Producto no encontrado';
-    }
-
-    this.products.splice(index, 1);
-    
+  async deleteProduct(id) {
+    const product = this.getProductById(id);
+    await product.destroy();
     return { id };
   };
 }

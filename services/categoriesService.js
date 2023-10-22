@@ -16,48 +16,31 @@ class CategoriesService {
     return res;
   }
 
-  getCategory(id) {
-    const category = this.categories.find(item => item.id === parseInt(id)); // Try to find the category using the id passed as param in your categories array;
+  async getCategory(id) {
+    const category = await models.Category.findByPk(id);
     if (!category) {
       throw boom.notFound('Categoria no encontrada');
     }
     return category;
   }
 
-  createCategory(data) {
-    const newCategory = {
-      id: this.categories.length + 1,
-      ...data
-    }
-    this.categories.push(newCategory);
+  async createCategory(data) {
+    const newCategory = await models.Category.create(data);
     return newCategory;
   }
 
-  updateCategory(id, data) {
-    const index = this.categories.findIndex(item => item.id === parseInt(id));
+  async updateCategory(id, data) {
+    const category = await this.getCategory(id);
 
-    if (index === -1) {
-      throw boom.notFound('Categoria no encontrada');
-    }
+    const res = await category.update(data);
 
-    const category = this.categories[index];
-
-    this.categories[index] = {
-      ...category,
-      ...data
-    }
-
-    return this.categories[index];
+    return res;
   }
 
-  deleteCategory(id) {
-    const index = this.categories.findIndex(item => item.id === parseInt(id));
+  async deleteCategory(id) {
+    const category = await this.getCategory(id);
+    await category.destroy();
 
-    if (index === -1) {
-      throw boom.notFound('Categoria no encontrada');
-    }
-
-    this.categories.splice(index, 1);
     return { id };
   }
 
