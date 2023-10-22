@@ -25,7 +25,7 @@ const UserSchema = {
         type: DataTypes.VIRTUAL,
         get() {
             return `${this.firstName} ${this.lastName}`;
-        },   
+        },
     },
     email: {
         allowNull: false,
@@ -38,13 +38,15 @@ const UserSchema = {
         type: DataTypes.STRING,
         length: 50
     },
-    is_admin: {
+    isAdmin: {
         defaultValue: false,
-        type: DataTypes.BOOLEAN
+        type: DataTypes.BOOLEAN,
+        field: 'is_admin'
     },
-    is_active: {
+    isActive: {
         defaultValue: true,
-        type: DataTypes.BOOLEAN
+        type: DataTypes.BOOLEAN,
+        field: 'is_active'
     }
 }
 

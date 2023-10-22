@@ -17,12 +17,12 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id', 
+router.get('/:id',
   validatorHandler(getUserSchema, 'params'),
   async (req, res, next) => {
     try {
       const { id } = req.params;
-      const user = service.getUserById(id);
+      const user = await service.getUserById(id);
       res.json(user);
     } catch (error) {
       next(error);
@@ -30,11 +30,11 @@ router.get('/:id',
   }
 );
 
-router.post('/', 
-  validatorHandler(createUserSchema, 'body'), 
+router.post('/',
+  validatorHandler(createUserSchema, 'body'),
   async (req, res, next) => {
   const body = req.body;
-  
+
   try {
     const newUser = await service.createUser(body);
 
@@ -47,7 +47,7 @@ router.post('/',
   }
 });
 
-router.patch('/:id', 
+router.patch('/:id',
   validatorHandler(getUserSchema, 'params'),
   validatorHandler(updateUserSchema, 'body'),
   async (req, res, next) => {
@@ -68,7 +68,7 @@ router.patch('/:id',
 
 });
 
-router.delete('/:id', 
+router.delete('/:id',
   validatorHandler(getUserSchema, 'params'),
   async (req, res, next) => {
   const { id } = req.params;

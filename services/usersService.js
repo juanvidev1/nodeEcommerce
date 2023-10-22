@@ -1,4 +1,3 @@
-const { faker } = require("@faker-js/faker");
 const boom = require("@hapi/boom");
 
 const { models } = require("../libs/sequelize");
@@ -6,7 +5,7 @@ const { models } = require("../libs/sequelize");
 class UsersService {
     constructor() {}
 
-    
+
     async getAllUsers() {
       const res = await models.User.findAll();
       if (res.length === 0) {
@@ -15,8 +14,8 @@ class UsersService {
       return res;
     }
 
-    getUserById(userId) {
-        const user =  this.users.find(user => user.id === parseInt(userId))
+    async getUserById(userId) {
+        const user = await models.User.findByPk(userId);
         if (!user) {
           throw boom.notFound('Usuario no encontrado');
         }
@@ -29,31 +28,19 @@ class UsersService {
 
     async createUser(userData) {
       try {
-        const newUser = await models.User.create(userData);
-        return newUser;
+        return await models.User.create(userData);
       } catch (error) {
         throw boom.badRequest(error);
       }
     }
 
     async updateUser(userId, userData) {
-      const user = await models.User.findByPk(userId);
-      if (!user) {
-        throw boom.notFound('Usuario no encontrado');
-      } 
-
-      const res = await models.User.update(userData);
-
-      return res;
+      const user = await this.getUserById(userId);
+      return await user.update(userData);
     }
 
-    deleteUser(id) {
-      const index = this.users.findIndex(item => item.id === parseInt(id));
-      if (index === -1) {
-        throw boom.notFound('Usuario no encontrado');
-      }
-
-      this.users.splice(index, 1);
+    async deleteUser(id) {
+      const user = await this.getUserById(id);
       return { id };
     }
 }
