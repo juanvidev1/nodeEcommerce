@@ -22,10 +22,10 @@ const UserSchema = {
         length: 80
     },
     fullName: {
-        type: DataTypes.VIRTUAL,
-        get() {
+        type: DataTypes.STRING,
+        value: function() {
             return `${this.firstName} ${this.lastName}`;
-        },   
+        }      
     },
     email: {
         allowNull: false,
