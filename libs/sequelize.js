@@ -22,6 +22,6 @@ const sequelize = new Sequelize(URI, {
 
 setupModels(sequelize);
 
-sequelize.sync();
+// sequelize.sync(); --> Una vez generada la migración ya no se utiliza esta pieza de código. Ya se va a hacer todo por migraciones
 
 module.exports = sequelize;
