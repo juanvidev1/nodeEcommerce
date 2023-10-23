@@ -22,7 +22,7 @@ router.get('/:id',
   async (req, res, next) => {
     try {
       const { id } = req.params;
-      const user = service.getUserById(id);
+      const user = await service.getUserById(id);
       res.json(user);
     } catch (error) {
       next(error);

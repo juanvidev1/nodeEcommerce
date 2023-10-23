@@ -15,16 +15,17 @@ class UsersService {
     }
 
     async getUserById(userId) {
-        const user = await models.User.findByPk(userId);
-        
-        if (!user) {
-          throw boom.notFound('Usuario no encontrado');
-        }
-        if (user.active === false) {
-            throw boom.conflict('Usuario bloqueado');
-        }
 
-        return user;
+      const user = await models.User.findByPk(userId);
+        
+      if (!user) {
+        throw boom.notFound('Usuario no encontrado');
+      }
+      if (user.active === false) {
+        throw boom.conflict('Usuario bloqueado');
+      }
+
+      return user;
     }
 
     async createUser(userData) {
