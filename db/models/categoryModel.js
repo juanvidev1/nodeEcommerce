@@ -25,6 +25,12 @@ const CategorySchema = {
         allowNull: true,
         type: DataTypes.STRING,
         field: 'category_image'
+    },
+    createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        field: 'created_at',
+        defaultValue: Sequelize.NOW
     }
 }
 
