@@ -37,7 +37,7 @@ class CustomerService
 
     async updateCustomer(id, changes)
     {
-        const customer = this.getCustomer(id);
+        const customer = await this.getCustomer(id);
         
         const updatedCustomer = await customer.update(changes);
         return updatedCustomer;
@@ -45,7 +45,7 @@ class CustomerService
 
     async deleteCustomer(id)
     {
-        const customer = this.getCustomer(id);
+        const customer = await this.getCustomer(id);
         await customer.destroy();
         return { id };
     }

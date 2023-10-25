@@ -8,6 +8,9 @@ function setupModels(sequelize) {
   Category.init(CategorySchema, Category.config(sequelize));
   Product.init(ProductSchema, Product.config(sequelize));
   Customer.init(CustomerSchema, Customer.config(sequelize));
+
+  // Luego de los inits, se llaman a las asociaciones o relaciones
+  Customer.associate(sequelize.models);
 }
 
 module.exports = setupModels;
