@@ -33,9 +33,8 @@ router.get('/:id',
 router.post('/', 
   validatorHandler(createUserSchema, 'body'), 
   async (req, res, next) => {
-  const body = req.body;
-  
   try {
+    const body = req.body;
     const newUser = await service.createUser(body);
 
     res.status(201).json({

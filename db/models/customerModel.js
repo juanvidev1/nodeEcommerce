@@ -1,7 +1,7 @@
 const { Model, DataTypes, Sequelize } = require('sequelize');
 
 const CUSTOMER_TABLE = 'customers';
-const { USER_TABLE } = require('./userModel');
+const { USER_TABLE } = require('./../models/userModel');
 
 const CustomerSchema = {
     id: {
@@ -9,16 +9,6 @@ const CustomerSchema = {
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER
-    },
-    firstName: {
-        allowNull: false,
-        type: DataTypes.STRING,
-        field: 'first_name'
-    },
-    lastName: {
-        allowNull: false,
-        type: DataTypes.STRING,
-        field: 'last_name'
     },
     phone: {
         allowNull: false,
@@ -29,22 +19,23 @@ const CustomerSchema = {
         type: DataTypes.BOOLEAN,
         field: 'is_active'
     },
-    userId: {
-        field: 'user_id',
-        allowNull: false,
-        type: DataTypes.INTEGER,
-        references: {
-            table: USER_TABLE,
-            key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
-    },
     createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
         field: 'created_at',
         defaultValue: Sequelize.NOW
+    },
+    userId: {
+        field: 'user_id',
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        unique: true,
+        references: {
+          model: USER_TABLE,
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
     }
 }
 
@@ -60,7 +51,7 @@ class Customer extends Model
             sequelize,
             tableName: CUSTOMER_TABLE,
             modelName: 'Customer',
-            timestamps: true
+            timestamps: false
         }
     }
 }

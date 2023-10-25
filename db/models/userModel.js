@@ -21,13 +21,6 @@ const UserSchema = {
         field: 'last_name',
         length: 80
     },
-    //No olvidar comentar este campo cuando vaya a hacer modificaciones a la tabla de usuarios.
-    fullName: {
-        type: DataTypes.VIRTUAL,
-        get() {
-            return firstName + ' ' + lastName;
-        }   
-    },
     email: {
         allowNull: false,
         type: DataTypes.STRING,
@@ -58,8 +51,12 @@ const UserSchema = {
 }
 
 class User extends Model {
-    static associate() {
+    static associate(models) {
         // Modelos que se relacionan con este modelo
+        this.hasOne(models.Customer, {
+            as: 'customer',
+            foreignKey: 'userId'
+        })
     }
 
     static config(sequelize) {

@@ -8,7 +8,9 @@ class CustomerService
 
     async getAllCustomers()
     {
-        const customers = await models.Customer.findAll();
+        const customers = await models.Customer.findAll({
+            include: ["user"] // Como se pueden tener varias asociaciones, el include se pasa como un array
+        });
         if (customers.length === 0) {
             throw boom.notFound("No customers found");
         }
@@ -18,7 +20,9 @@ class CustomerService
 
     async getCustomer(id)
     {
-        const customer = await models.Customer.findByPk(id);
+        const customer = await models.Customer.findByPk(id, {
+            include: ["user"]
+        });
         if (!customer) {
             throw boom.notFound("Customer not found");
         }
@@ -32,14 +36,20 @@ class CustomerService
     
     async createCustomer(data)
     {
-        return "Hola mundo";
+        const newCustomer = await models.Customer.create(data, {
+            include: ["user"]
+        });
+        return newCustomer;
     }
 
     async updateCustomer(id, changes)
     {
         const customer = await this.getCustomer(id);
-        
-        const updatedCustomer = await customer.update(changes);
+        console.log('Customer encontrado ' + customer.id);
+        console.log('Cambios a aplicar ' + changes.body);
+        const updatedCustomer = await customer.update(changes, {
+            include: ["user"]
+        });
         return updatedCustomer;
     }
 

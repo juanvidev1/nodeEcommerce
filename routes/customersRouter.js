@@ -2,12 +2,11 @@ const express = require('express');
 const CustomerService = require('../services/customersService');
 const validatorHandler = require('../middleware/validatorHandler');
 const { createCustomerSchema, updateCustomerSchema, getCustomerSchema } = require('../schemas/customerSchema');
-import * as next from 'next';
 
 const router = express.Router();
 const service = new CustomerService();
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
     try {
         const customers = await service.getAllCustomers();
         return res.json(customers);
@@ -62,3 +61,5 @@ async (req, res, next) => {
         next(error);
     }
 });
+
+module.exports = router;
