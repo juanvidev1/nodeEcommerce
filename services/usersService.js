@@ -7,7 +7,9 @@ class UsersService {
 
     
     async getAllUsers() {
-      const res = await models.User.findAll();
+      const res = await models.User.findAll({
+        include: ['customer']
+      });
       if (res.length === 0) {
         throw boom.notFound('No se encontraron usuarios');
       }
