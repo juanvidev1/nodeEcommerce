@@ -45,11 +45,9 @@ class CustomerService
     async updateCustomer(id, changes)
     {
         const customer = await this.getCustomer(id);
-        console.log('Customer encontrado ' + customer.id);
-        console.log('Cambios a aplicar ' + changes.body);
-        const updatedCustomer = await customer.update(changes, {
-            include: ["user"]
-        });
+        
+        const updatedCustomer = await customer.update(changes);
+        
         return updatedCustomer;
     }
 
