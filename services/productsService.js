@@ -7,7 +7,9 @@ class ProductsService {
   constructor() {}
 
   async getAllProducts() {
-    const res = await models.Product.findAll();
+    const res = await models.Product.findAll({
+      include: ['category']
+    });
     
     if(res.length === 0) {
       throw boom.notFound('No hay productos');

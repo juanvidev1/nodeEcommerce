@@ -17,7 +17,9 @@ class CategoriesService {
   }
 
   async getCategory(id) {
-    const category = await models.Category.findByPk(id);
+    const category = await models.Category.findByPk(id, {
+      include: ['products']
+    });
     if (!category) {
       throw boom.notFound('Categoria no encontrada');
     }

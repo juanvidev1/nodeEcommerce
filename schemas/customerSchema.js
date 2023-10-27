@@ -12,7 +12,7 @@ const createCustomerSchema = Joi.object({
 
 const updateCustomerSchema = Joi.object({
     phone: phone,
-    user: userId
+    user: updateUserSchema.id
 });
 
 const getCustomerSchema = Joi.object({
