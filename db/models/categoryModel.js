@@ -37,6 +37,10 @@ const CategorySchema = {
 class Category extends Model {
     static associate(models) {
         // Aquí van las relaciones
+        this.hasMany(models.Product, {
+            as: 'products', 
+            foreignKey: 'categoryId'
+        });
     }
 
     static config(sequelize) {
