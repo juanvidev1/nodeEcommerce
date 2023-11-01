@@ -21,6 +21,51 @@ const OrderSchema = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
     },
+    state: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        defaultValue: 'created',
+        field: 'order_status'
+    },
+    totalAmount: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        field: 'total_amount',
+        defaultValue: 0
+    },
+    paymentMethod: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        field: 'payment_method'
+    },
+    isDeliverable: {
+        allowNull: false,
+        type: DataTypes.BOOLEAN,
+        field: 'is_deliverable',
+        defaultValue: false
+    },
+    shippingAddress: {
+        type: DataTypes.STRING,
+        field: 'shipping_address',
+        defaultValue: 'N/A'
+    },
+    billingAddress: {
+        type: DataTypes.STRING,
+        field: 'billing_address',
+        defaultValue: 'N/A'
+    },
+    shippingMethod: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        field: 'shipping_method',
+        defaultValue: 'N/A'
+    },
+    shippingCost: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        field: 'shipping_cost',
+        defaultValue: 0
+    },
     createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
