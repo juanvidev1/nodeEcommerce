@@ -6,7 +6,6 @@ const CategorySchema = {
     id: {
         allowNull: false,
         autoIncrement: true,
-        autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER
     },
