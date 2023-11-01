@@ -14,9 +14,10 @@ function setupModels(sequelize) {
   // Luego de los inits, se llaman a las asociaciones o relaciones
   User.associate(sequelize.models);
   Customer.associate(sequelize.models);
-  Order.associate(sequelize.models);
   Category.associate(sequelize.models);
   Product.associate(sequelize.models);
+  Order.associate(sequelize.models);
+  
 }
 
 module.exports = setupModels;
