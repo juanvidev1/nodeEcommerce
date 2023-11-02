@@ -9,7 +9,7 @@ const shippingAddress = Joi.string().min(7).max(80);
 const billingAddress = Joi.string().min(7).max(80);
 const shippingMethod = Joi.string().min(3).max(30);
 const shippingCost = Joi.number();
-const totalAmount = Joi.number();
+const totalPrice = Joi.number();
 
 const createOrderSchema = Joi.object({
     customerId: customerId.required(),
@@ -20,7 +20,7 @@ const createOrderSchema = Joi.object({
     billingAddress: billingAddress,
     shippingMethod: shippingMethod,
     shippingCost: shippingCost,
-    totalAmount: totalAmount
+    totalPrice: totalPrice
 });
 
 const getOrderSchema = Joi.object({
@@ -35,7 +35,7 @@ const updateOrderSchema = Joi.object({
     billingAddress: billingAddress,
     shippingMethod: shippingMethod,
     shippingCost: shippingCost,
-    totalAmount: totalAmount
+    totalPrice: totalPrice
 });
 
 module.exports = { createOrderSchema, getOrderSchema, updateOrderSchema };

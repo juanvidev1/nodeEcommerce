@@ -27,7 +27,7 @@ const OrderSchema = {
         defaultValue: 'created',
         field: 'order_status'
     },
-    totalAmount: {
+    totalPrice: {
         allowNull: false,
         type: DataTypes.INTEGER,
         field: 'total_amount',

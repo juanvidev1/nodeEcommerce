@@ -19,6 +19,20 @@ async (req, res, next) => {
   }
 });
 
+router.patch('/:id/total-price', 
+validatorHandler(getOrderProductSchema, 'params'),
+async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const totalPrice = await service.calculateTotalPrice(id);
+        await service.updateOrderTotalPrice(id, totalPrice);
+        res.json({"message": "El precio fue cambiado con éxito"});
+    } catch (error) {
+        next(error);
+    }
+
+});
+
 router.post('/add', 
 validatorHandler(addItemSchema, 'body'), 
 async (req, res, next) => {

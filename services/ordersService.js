@@ -39,6 +39,22 @@ class OrdersService {
         return res;
     }
 
+    async updateOrderStatus(id, changes) {
+        const order = await this.findOrderById(id);
+        const res = await order.update(changes);
+        return res;
+    }
+
+    async updateTotalPrice(id, changes) {
+        try {
+            const order = await this.findOrderById(id);
+            const res = await order.update(changes.totalPrice);
+            return res;
+        } catch (error) {
+            throw boom.badRequest(error);
+        }
+    }
+
     async deleteOrder(id) {
         const order = await this.findOrderById(id);
         await order.destroy();
