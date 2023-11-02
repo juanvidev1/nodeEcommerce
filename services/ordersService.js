@@ -21,6 +21,9 @@ class OrdersService {
                 {
                     association: 'customer',
                     include: ['user']
+                },
+                {
+                    association: 'items'
                 }
             ]
         });

@@ -68,6 +68,11 @@ class Product extends Model
     static associate(models) {
         // Modelos que se relacionan con este modelo
         this.belongsTo(models.Category, {as: 'category'});
+        this.belongsToMany(models.Order, {
+            as: 'product',
+            through: models.OrderProduct,
+            foreignKey: 'productId',
+        });
     }
 
     static config(sequelize) {
